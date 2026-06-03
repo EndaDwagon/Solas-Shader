@@ -58,8 +58,8 @@ void calculateVLParameters(inout float intensity, inout float distanceFactor, in
     intensity *= fmix(pow4(1.0 - VoUClamped), 0.125 + timeBrightness * 0.5, float(isEyeInWater == 1));
     #endif
 
-    intensity *= VL_STRENGTH * shadowFade * caveFactor;
-    samplePersistence *= 1.0 - closedSpaceFactor * 0.35 - float(isEyeInWater == 1) * 0.25;
+    intensity *= VL_STRENGTH * shadowFade * caveFactor * (1.0 + wetness);
+    samplePersistence *= 1.0 - closedSpaceFactor * 0.35 - float(isEyeInWater == 1) * 0.25 - wetness * 0.25;
     distanceFactor = float(isEyeInWater) * 5.0 + closedSpaceFactor * 2.0;
 }
 #endif

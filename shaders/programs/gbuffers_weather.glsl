@@ -15,10 +15,10 @@ uniform sampler2D tex;
 
 //Program//
 void main() {
-	vec4 albedo = texture2D(tex, texCoord) * rainStrength;
+	vec4 albedo = texture2D(tex, texCoord) * rainStrength * 0.5;
     float altitudeFactor10k = min(max(cameraPosition.y, 0.0) * 0.0001, 1.0);
     albedo.a *= 1.0 - altitudeFactor10k;
-	albedo.a *= 0.3 * length(albedo.rgb * 0.3);
+	albedo.a *= 0.5 * length(albedo.rgb * 0.5);
 
 	if (albedo.a < 0.01) discard;
 

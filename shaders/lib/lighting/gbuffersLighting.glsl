@@ -235,7 +235,7 @@ void gbuffersLighting(in vec4 color, inout vec4 albedo, in vec3 screenPos, in ve
     ambientCol *= 0.05 + lightmap.y * lightmap.y * 0.95;
     ambientCol *= 1.0 - VoL * VoL * (0.35 - wetness * 0.35) * sunVisibility;
 
-    float rainFactor = 1.0 - wetness * 0.5;
+    float rainFactor = 1.0 - wetness * 0.75;
 
     vec3 sceneLighting = fmix(ambientCol, lightCol, shadow * rainFactor * shadowFade) * (0.25 + lightmap.y * 0.75);
             sceneLighting *= 1.0 + sss * shadow * 2.0;

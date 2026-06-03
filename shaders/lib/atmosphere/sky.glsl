@@ -1,6 +1,7 @@
 vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFactor) {
     float altitudeFactor = min(max(cameraPosition.y, 0.0) / KARMAN_LINE, 1.0);
     vec3 skyTint = fmix(vec3(1.0, 0.7 + timeBrightness * 0.3, 0.7 + timeBrightness * 0.3) * normalize(skyColor + 0.000001), vec3(0.35, 0.6, 1.0) * (0.35 + timeBrightnessSqrt * 0.35), altitudeFactor);
+         skyTint = pow(skyTint, vec3(1.0 - wetness * 0.5));
     vec3 daySkyColor = skyTint * fmix(vec3(1.0), biomeColor, isSpecificBiome * (1.0 - altitudeFactor)) * fmix(vec3(1.0), weatherCol, wetness * (1.0 - altitudeFactor));
 
     vec3 nWorldPos = normalize(worldPos);
@@ -28,14 +29,17 @@ vec3 getAtmosphere(vec3 viewPos, vec3 worldPos, out float atmosphereHardMixFacto
     ) * (1.0 + VoS2 * sunVisibility);
 
     float scattering = pow(clamp(1.0 - nWorldPos.y, 0.0, 1.0), fmix(3.0 - VoS * 1.5, 1.0, altitudeFactor)) * (0.5 - timeBrightnessSqrt * 0.3) * (1.0 - wetness * 0.5);
-            scattering *= sqrt(clamp(1.0 + nWorldPos.y, 0.0, 1.0));
+          scattering *= sqrt(clamp(1.0 + nWorldPos.y, 0.0, 1.0));
 
     daySkyColor = fmix(daySkyColor, scatteringColor, scattering * SUNRISE_SUNSET_INTENSITY);
-    vec3 atmosphere = fmix(daySkyColor, lightNight * 0.5, moonVisibility);
+    vec3 nightSky = fmix(lightNight, lightNight * weatherCol, wetness * 0.75);
+         nightSky = pow(nightSky * (1.0 - wetness * 0.75), vec3(1.0 - wetness * 0.5));
+
+    vec3 atmosphere = fmix(daySkyColor, nightSky * 0.5, moonVisibility);
 
     float heightPositive = max(nWorldPos.y * (1.0 - altitudeFactor * 0.5) + altitudeFactor * 0.5, 0.0);
-    float density = clamp((1.0 - heightPositive * (0.65 + moonVisibility * 1.5)), 0.0, 1.0) + moonVisibility * 0.2;
-            density = mix(density, clamp(pow5(1.0 - heightPositive * 2.0) * 32.0, 0.0, 1.0), altitudeFactor);
+    float density = clamp((1.0 - heightPositive * (0.65 + moonVisibility * 1.5 * (1.0 - wetness))), 0.0, 1.0) + moonVisibility * 0.2;
+          density = mix(density, clamp(pow5(1.0 - heightPositive * 2.0) * 32.0, 0.0, 1.0), altitudeFactor);
 
     atmosphereHardMixFactor = altitudeFactor * density;
     atmosphere *= density;

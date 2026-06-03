@@ -57,7 +57,7 @@ void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, 
                 fade *= pow3(fade);
                 fade *= distanceFactor;
 
-		float cloudSample = sqrt(noise) * (1.0 - wetness) * fade * caveFactor;
+		float cloudSample = sqrt(noise) * fade * caveFactor;
 
         float noiseDiff = clamp(noise - lightingNoise, 0.0, 1.0);
 		float cloudLighting = (0.25 + noiseDiff * shadowFade * 2.0) * (1.0 - noise * noise * (1.0 - altitudeFactor10k) * 0.75) * 2.0;
@@ -102,13 +102,13 @@ void drawPlanarClouds(inout vec4 pc, in vec3 atmosphereColor, in vec3 worldPos, 
 
 		vec3 nSkyColor = normalize(skyColor + 0.0001);
 		vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt * (0.5 - wetness * 0.5));
-			     cloudLightColor *= 0.25 + sunVisibility * 0.5 + moonVisibility * 0.5 + 2.0 * scattering;
-                //Aurora influence
-                #ifdef AURORA_LIGHTING_INFLUENCE
-                cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
-                cloudLightColor.g *= 1.0 + auroraVisibility;
-                cloudLightColor /= 1.0 + auroraVisibility;
-                #endif
+            cloudLightColor *= 0.25 + sunVisibility * 0.5 + moonVisibility * 0.5 + 2.0 * scattering;
+            //Aurora influence
+            #ifdef AURORA_LIGHTING_INFLUENCE
+            cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
+            cloudLightColor.g *= 1.0 + auroraVisibility;
+            cloudLightColor /= 1.0 + auroraVisibility;
+            #endif
 
 		pc = vec4(cloudLightColor * cloudLighting * noise * PLANAR_CLOUDS_BRIGHTNESS, cloudSample);
         pc.rgb = pow(pc.rgb, vec3(1.0 / 2.2));

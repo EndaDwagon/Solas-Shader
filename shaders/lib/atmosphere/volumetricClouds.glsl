@@ -300,18 +300,17 @@ void computeVolumetricClouds(inout vec4 vc, in vec3 atmosphereColor, float z, fl
             //Final color calculations
 			vec3 nSkyColor = normalize(skyColor + 0.0001);
             vec3 atmColor22 = pow(atmosphereColor, vec3(2.2));
-            vec3 cloudAmbientColor = fmix(atmColor22, atmColor22 * mix(vec3(1.0), nSkyColor * 0.5, isSpecificBiome), timeBrightnessSqrt) * (0.5 + sunVisibility * 0.5);
+            vec3 cloudAmbientColor = fmix(atmColor22, atmColor22 * mix(vec3(1.0), nSkyColor * 0.5, isSpecificBiome), timeBrightnessSqrt) * (0.5 + sunVisibility * 0.5 - wetness * 0.5);
 
             vec3 cloudLightColor = fmix(lightCol, lightCol * nSkyColor * 2.0, timeBrightnessSqrt);
-                    cloudLightColor *= 0.125 + cloudLighting * (0.875 + pow3(scattering) * 0.5 * moonVisibility);
-                    //Aurora influence
-                    #ifdef AURORA_LIGHTING_INFLUENCE
-                    cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
-                    cloudLightColor.g *= 1.0 + auroraVisibility;
-                    cloudLightColor /= 1.0 + auroraVisibility;
-                    #endif
+                cloudLightColor *= 0.125 + cloudLighting * (0.875 + pow3(scattering) * 0.5 * moonVisibility);
+                //Aurora influence
+                #ifdef AURORA_LIGHTING_INFLUENCE
+                cloudLightColor.r *= 1.0 + pow3(kpIndex) * pulse * auroraVisibility * 4.0;
+                cloudLightColor.g *= 1.0 + auroraVisibility;
+                cloudLightColor /= 1.0 + auroraVisibility;
+                #endif
 			vec3 cloudColor = fmix(cloudAmbientColor, cloudLightColor, ambientLighting * (0.5 + shadowFade * 0.5)) * fmix(vec3(1.0), biomeColor, isSpecificBiome * sunVisibility);
-			        cloudColor = fmix(cloudColor, atmosphereColor * length(cloudColor), wetness * 0.25);
 
             float opacity = clamp(fmix(VC_OPACITY, 1.0, (max(0.0, cameraPosition.y - thickness * 10.0) / height)), 0.0, 1.0);
 

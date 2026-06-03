@@ -8,7 +8,7 @@ vec3 ambientSun = fmix(fmix(fmix(ambientSunrise, ambientMorning, timeBrightnessS
 
 vec3 lightColRaw = fmix(lightNight, lightSun, sunVisibility);
 vec3 lightColSqrt = fmix(lightColRaw, lightColRaw * weatherCol, wetness * 0.75);
-vec3 lightCol = lightColSqrt * lightColSqrt;
+vec3 lightCol = pow(lightColSqrt * (1.0 - wetness * 0.5), vec3(2.0 - wetness));
 
 vec3 ambientColRaw = fmix(ambientNight, ambientSun, sunVisibility);
 vec3 ambientColSqrt = fmix(ambientColRaw, ambientColRaw * weatherCol, wetness * 0.75);
