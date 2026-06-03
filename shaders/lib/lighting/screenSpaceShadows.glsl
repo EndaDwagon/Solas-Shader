@@ -1,6 +1,8 @@
 //Based on BSL
-vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthtex, mat4 projection, mat4 projectionInverse,  float dither) {
-	float shadow = 1.0;
+vec3 computeScreenSpaceShadows(vec3 viewPos, vec3 lightVector, sampler2D depthtex, mat4 projection, mat4 projectionInverse, float dither, float voxyTransparentAlpha) {
+	if (voxyTransparentAlpha > 0.01) return vec3(1.0);
+    
+    float shadow = 1.0;
 
 	float traceZ = 0.0;
 	float zDelta = 0.0;

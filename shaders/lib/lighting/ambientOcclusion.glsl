@@ -128,7 +128,8 @@ const vec2 aoDepthOffsets[4] = vec2[4](
 	vec2( 1.0, -2.0)
 );
 
-float getAmbientOcclusion(float z, sampler2D depthtex, mat4 projectionInverse){
+float getAmbientOcclusion(float z, sampler2D depthtex, mat4 projectionInverse, in float voxyTransparentAlpha){
+    if (voxyTransparentAlpha > 0.01) return 1.0;
 	float ao = 0.0;
 	float tw = 0.0;
 	float lz = GetLinearDepth(z, projectionInverse);
